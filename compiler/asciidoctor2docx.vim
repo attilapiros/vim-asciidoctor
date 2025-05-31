@@ -53,10 +53,21 @@ else
     let other_params = ''
 endif
 
+if get(g:, 'asciidoctor_destination_path', '') == ''
+    let s:destination_path = ""
+    let s:docx_path = shellescape(expand("%:p:r") . ".docx")
+    let s:xml_path = shellescape(expand("%:p:r") . ".xml")
+else
+    let s:destination_path = " -D " . expand("%:p:h") . "/" . g:asciidoctor_destination_path
+    let s:docx_path = expand("%:p:h")  . "/" . g:asciidoctor_destination_path . '/' . shellescape(expand("%:t:r") . ".docx")
+    let s:xml_path = expand("%:p:h") . "/" . g:asciidoctor_destination_path . '/' . shellescape(expand("%:t:r") . ".xml")
+endif
+
 let s:make_docbook = s:asciidoctor_executable . " " . s:extensions
             \. " -a docdate=" . strftime("%Y-%m-%d")
             \. " -a doctime=" . strftime("%T")
             \. " -b docbook"
+            \. s:destination_path . " "
             \. " " . shellescape(expand("%:p"))
 
 let s:make_docx = s:asciidoctor_pandoc_executable
@@ -64,8 +75,8 @@ let s:make_docx = s:asciidoctor_pandoc_executable
             \. data_dir_param
             \. reference_doc_param
             \. " -f docbook -t docx"
-            \. " -o " . shellescape(expand("%:p:r") . ".docx")
-            \. " " . shellescape(expand("%:p:r") . ".xml")
+            \. " -o " . s:docx_path
+            \. " " . s:xml_path
 
 let s:cd = "cd ".shellescape(expand("%:p:h"))
 let &l:makeprg = s:make_docbook . " && " . s:cd ." && ". s:make_docx

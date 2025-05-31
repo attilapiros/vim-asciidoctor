@@ -28,6 +28,12 @@ else
     let s:css_name = '-a stylesheet='.shellescape(g:asciidoctor_css)
 endif
 
+if get(g:, 'asciidoctor_destination_path', '') == ''
+    let s:destination_path = ""
+else
+    let s:destination_path = "-D " . expand("%:p:h") . "/" . g:asciidoctor_destination_path
+endif
+
 let s:asciidoctor_executable = get(g:, 'asciidoctor_executable', 'asciidoctor')
 
 let s:filename = shellescape(get(g:, 'asciidoctor_use_fullpath', v:true) ? expand("%:p") : expand("%:t"))
@@ -35,6 +41,7 @@ let s:filename = shellescape(get(g:, 'asciidoctor_use_fullpath', v:true) ? expan
 let &l:makeprg = s:asciidoctor_executable . " " . s:extensions
             \. " -a docdate=".strftime("%Y-%m-%d")
             \. " -a doctime=".strftime("%T") . " "
+            \. s:destination_path . " "
             \. s:css_path . " "
             \. s:css_name . " "
             \. s:filename

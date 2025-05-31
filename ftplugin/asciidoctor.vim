@@ -292,7 +292,14 @@ func! s:get_fname(...)
     if ext == ''
         return expand("%")
     else
-        return expand("%:r").ext
+        if get(g:, 'asciidoctor_destination_path', '') == ''
+            return expand("%:r").ext
+        else
+            let s:destination_path = expand("%:p:h") . "/" . g:asciidoctor_destination_path
+            let f = s:destination_path . "/" . expand("%:t:r") . ext
+            echo(f)
+            return f
+        endif
     endif
 endfunc
 

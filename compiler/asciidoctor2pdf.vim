@@ -46,9 +46,16 @@ let s:asciidoctor_pdf_executable = get(g:, 'asciidoctor_pdf_executable', 'asciid
 
 let s:filename = shellescape(get(g:, 'asciidoctor_use_fullpath', v:true) ? expand("%:p") : expand("%:t"))
 
+if get(g:, 'asciidoctor_destination_path', '') == ''
+    let s:destination_path = ""
+else
+    let s:destination_path = "-D " . expand("%:p:h") . "/" . g:asciidoctor_destination_path
+endif
+
 let &l:makeprg = s:asciidoctor_pdf_executable . " " . s:extensions
             \. " -a docdate=" . strftime("%Y-%m-%d")
             \. " -a doctime=" . strftime("%H:%M:%S") . " "
+            \. s:destination_path . " "
             \. s:pdf_themes_path . " "
             \. s:pdf_fonts_path . " "
             \. s:filename
